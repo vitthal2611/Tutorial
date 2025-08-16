@@ -1,75 +1,85 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>GONZO</title>
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Habit Tracker</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <h1>Habit Tracker</h1>
+        <div class="view-controls">
+          <label for="periodSelect">View:</label>
+          <select id="periodSelect" aria-label="Select period view">
+            <option value="daily" selected>Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+          <span id="currentPeriodLabel" class="muted"></span>
+        </div>
+      </header>
 
+      <section id="dashboard" class="dashboard" aria-label="Completion dashboard">
+        <!-- Stats injected by JS -->
+      </section>
 
-<!--=Header Starts========-->
+      <section class="add-habit" aria-label="Add new habit">
+        <h2>Add Habit</h2>
+        <form id="habitForm">
+          <div class="form-row">
+            <label for="triggerInput">Trigger</label>
+            <input id="triggerInput" type="text" placeholder="After Brush" required>
+          </div>
+          <div class="form-row">
+            <label for="timeInput">Time</label>
+            <input id="timeInput" type="time" value="06:00" required>
+          </div>
+          <div class="form-row">
+            <label for="actionInput">Action</label>
+            <input id="actionInput" type="text" placeholder="I will wash my face" required>
+          </div>
+          <div class="form-row">
+            <label for="goalInput">Goal</label>
+            <input id="goalInput" type="text" placeholder="fitness" required>
+          </div>
+          <div class="form-row">
+            <label for="frequencySelect">Frequency</label>
+            <select id="frequencySelect" required>
+              <option value="daily" selected>Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary">Add Habit</button>
+            <button type="button" id="clearCompletionsBtn" class="ghost">Reset current period</button>
+            <button type="button" id="clearAllBtn" class="danger ghost">Clear all</button>
+          </div>
+        </form>
+      </section>
 
-	<div class="header">
-		
-		<div class="logo">
-		
-			<h1><a href="#">GONZO</a></h1>
-		
-		</div>
+      <section class="habits" aria-label="Habits list">
+        <div class="list-header">
+          <h2 id="listTitle">Today's Habits</h2>
+          <div class="list-subtitle" id="listSubtitle"></div>
+        </div>
+        <ul id="habitList" class="habit-list"></ul>
+        <div id="emptyState" class="empty-state" hidden>
+          No habits yet for this period. Add one above.
+        </div>
+      </section>
 
-	</div>
+      <footer class="footer">
+        <span class="muted">Data is stored locally in your browser.</span>
+      </footer>
+    </div>
 
-<!--==========================Header Ends======================================-->
-
-<!--==============================Navigatin starts=============================-->
-
-	<div class="navigation">
-		<ul>
-			<li><a class="active" href="index.html">HOME</a></li>
-			<li><a href="about.html">ABOUT</a></li>
-			<li><a href="picture.html">PICTURES</a></li>
-			<li class="bdr"><a class="pdg" href="contact.html">CONTACT</a></li>					
-		</ul>
-	</div>
-<!--==============================Navigatin Ends=============================-->
-
-<!--==============================Slider Starts==============================-->
-
-		<div id="slider">
-			<ul>				
-				<li><a href="#"><img src="images/slide1.png" alt="" /></a></li>
-				<li><a href="#"><img src="images/slide2.png" alt="" /></a></li>
-				<li><a href="#"><img src="images/slide3.png" alt="" /></a></li>
-			</ul>
-		</div>
-
-<!--==============================Slider   Ends==============================-->
-
-
-<!--==============================Footer Starts==============================-->
-
-<div class="footer">
-
-<p>&copy; 2014 by XYZ </p>
-
-<!--==============================Footer Ends==============================-->
-</div>
-
-
-
-<!--==========================Scripts Starts=============================-->
-	<script type="text/javascript" src="js/jquery.js"></script>	
-	<script type="text/javascript" src="js/easySlider1.7.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function(){	
-			$("#slider").easySlider({
-				auto: true, 
-				continuous: true
-			});
-		});	
-	</script>
-<!--==========================Scripts Ends=============================-->
-
-</body>
+    <script src="./app.js"></script>
+  </body>
 </html>
