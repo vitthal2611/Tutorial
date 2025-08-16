@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { HabitService } from './habit.service';
 
 /**
  * Types
@@ -30,7 +32,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   template: `
     <div id="app">
       <header class="topbar">
@@ -148,9 +150,10 @@ export class App implements OnInit {
     frequency: 'daily',
   };
 
-  ngOnInit(): void {
-    this.ensureSeedData();
-    this.completions = this.loadCompletions();
+  constructor(private api: HabitService) {}
+
+  async ngOnInit(): Promise<void> {
+    await this.loadFromBackendOrSeed();
   }
 
   // Persistence
@@ -163,6 +166,15 @@ export class App implements OnInit {
     } catch {
       return [];
     }
+  }
+
+  private async loadFromBackendOrSeed(): Promise<void> {
+    try {
+      this.habits = await this.api.getHabits();
+    } catch {
+      this.ensureSeedData();
+    }
+    this.completions = this.loadCompletions();
   }
 
   private saveHabits(): void {
@@ -288,16 +300,21 @@ export class App implements OnInit {
     return Boolean(this.completions?.[this.currentPeriod]?.[key]?.[habit.id]);
   }
 
-  onToggleCompletion(habit: Habit, checked: boolean): void {
+  async onToggleCompletion(habit: Habit, checked: boolean): Promise<void> {
     const period = this.currentPeriod;
     const key = this.getPeriodKey(period, this.now);
-    if (!this.completions[period]) this.completions[period] = {};
-    if (!this.completions[period]![key]) this.completions[period]![key] = {};
-    this.completions[period]![key]![habit.id] = Boolean(checked);
-    this.saveCompletions();
+    try {
+      await this.api.setCompletion(period, key, habit.id, Boolean(checked));
+    } catch {
+      // fallback local
+      if (!this.completions[period]) this.completions[period] = {};
+      if (!this.completions[period]![key]) this.completions[period]![key] = {};
+      this.completions[period]![key]![habit.id] = Boolean(checked);
+      this.saveCompletions();
+    }
   }
 
-  addHabit(): void {
+  async addHabit(): Promise<void> {
     const { trigger, time, action, goal, frequency } = this.form;
     if (!trigger || !time || !action || !goal || !frequency) return;
     const newHabit: Habit = {
@@ -309,18 +326,27 @@ export class App implements OnInit {
       frequency,
       createdAt: Date.now(),
     };
-    this.habits.push(newHabit);
-    this.saveHabits();
+    try {
+      const created = await this.api.addHabit(newHabit);
+      this.habits.push(created);
+    } catch {
+      this.habits.push(newHabit);
+      this.saveHabits();
+    }
 
     this.form = { trigger: '', time: '06:00', action: '', goal: '', frequency: this.currentPeriod };
   }
 
-  deleteHabit(habit: Habit): void {
+  async deleteHabit(habit: Habit): Promise<void> {
     if (!confirm('Delete this habit?')) return;
+    try {
+      await this.api.deleteHabit(habit.id);
+    } catch {
+      // ignore; fallback already stored locally
+    }
     this.habits = this.habits.filter((h) => h.id !== habit.id);
     this.saveHabits();
 
-    // Clean completions for this habit across all periods and keys
     for (const period of Object.keys(this.completions) as Frequency[]) {
       const byKey = this.completions[period];
       if (!byKey) continue;

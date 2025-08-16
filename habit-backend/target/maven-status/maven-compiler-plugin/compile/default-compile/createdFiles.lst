@@ -1,0 +1,4 @@
+com/example/habit/model/Habit.class
+com/example/habit/web/HabitController.class
+com/example/habit/model/CompletionPayload.class
+com/example/habit/HabitBackendApplication.class

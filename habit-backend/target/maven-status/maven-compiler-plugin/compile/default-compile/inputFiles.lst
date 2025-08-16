@@ -1,0 +1,4 @@
+/workspace/habit-backend/src/main/java/com/example/habit/HabitBackendApplication.java
+/workspace/habit-backend/src/main/java/com/example/habit/model/CompletionPayload.java
+/workspace/habit-backend/src/main/java/com/example/habit/model/Habit.java
+/workspace/habit-backend/src/main/java/com/example/habit/web/HabitController.java
